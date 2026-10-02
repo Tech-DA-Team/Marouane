@@ -68,10 +68,8 @@
       height: 100%;
       pointer-events: none;
       z-index: 2;
-      background-image:
-        linear-gradient(rgba(143, 207, 155, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(143, 207, 155, 0.025) 1px, transparent 1px);
-      background-size: 32px 32px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='180' viewBox='0 0 240 180'%3E%3Cg fill='none' stroke='%238fcf9b' stroke-opacity='.16' stroke-width='1'%3E%3Cpath d='M0 28h42v24h38v22h28M240 118h-44V94h-34V70h-30M28 180v-38h36v-22h28M172 0v32h-28v28h-34'/%3E%3C/g%3E%3Cg fill='%23d9a879' fill-opacity='.28'%3E%3Ccircle cx='42' cy='28' r='2'/%3E%3Ccircle cx='80' cy='52' r='2'/%3E%3Ccircle cx='196' cy='118' r='2'/%3E%3Ccircle cx='64' cy='142' r='2'/%3E%3Ccircle cx='144' cy='32' r='2'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 240px 180px;
     }
 
     .vignette-overlay {
@@ -1350,6 +1348,8 @@
       const linePositions = [];
       const viaPositions = [];
       const tracerPositions = new Float32Array(streamCount * tracerCount * 3);
+      const tracerColors = new Float32Array(streamCount * tracerCount * 3);
+      const tracerPalette = [0x8fcf9b, 0x76d9e8, 0xe3a66f, 0xd58fc2, 0x9eaaf5];
       streamPaths = [];
       streamGroup = new THREE.Group();
 
@@ -1384,6 +1384,11 @@
           }
         }
 
+        for (let tracerIndex = 0; tracerIndex < tracerCount; tracerIndex++) {
+          const color = new THREE.Color(tracerPalette[i % tracerPalette.length]);
+          color.toArray(tracerColors, (i * tracerCount + tracerIndex) * 3);
+        }
+
         streamPaths.push({ route, segmentLengths, totalLength, speed: 0.09, offset: i / streamCount });
       }
 
@@ -1409,8 +1414,10 @@
 
       const tracerGeometry = new THREE.BufferGeometry();
       tracerGeometry.setAttribute('position', new THREE.BufferAttribute(tracerPositions, 3));
+      tracerGeometry.setAttribute('color', new THREE.BufferAttribute(tracerColors, 3));
       const tracerMaterial = new THREE.PointsMaterial({
-        color: 0xa6d982,
+        color: 0xffffff,
+        vertexColors: true,
         size: 0.22,
         transparent: true,
         opacity: 0.9,
