@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>M•E // Cyber-Architect & Systems Engineer</title>
+  
+  <!-- Fonts: Space Grotesk & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #101210;
+      --bg-secondary: #171a17;
+      --bg-surface: rgba(22, 26, 22, 0.92);
+      --bg-glass: rgba(24, 29, 24, 0.85);
+      
+      --cyan-core: #8fcf9b;
+      --cyan-glow: rgba(143, 207, 155, 0.2);
+      --violet-core: #d9a879;
+      --violet-glow: rgba(217, 168, 121, 0.2);
+      --emerald-core: #a6d982;
+      --border-subtle: rgba(224, 233, 220, 0.12);
+      --border-bright: rgba(143, 207, 155, 0.38);
+
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: #e2e8f0;
+      font-family: var(--font-display);
+      overflow-x: hidden;
+      min-height: 100vh;
+      line-height: 1.6;
+      cursor: default;
+    }
+
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Ambient CRT Scanline Overlay */
+    .cyber-grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+      background-image:
+        linear-gradient(rgba(143, 207, 155, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(143, 207, 155, 0.025) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    .vignette-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+      background: radial-gradient(circle at center, transparent 40%, rgba(6, 7, 10, 0.85) 100%);
+    }
+
+    /* Custom Cyber Cursor */
+    #cursor-dot, #cursor-ring {
+      pointer-events: none;
+      position: fixed;
+      border-radius: 50%;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.06s ease, border-color 0.2s ease, opacity 0.2s ease;
+    }
+    #cursor-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--cyan-core);
+      box-shadow: 0 0 10px var(--cyan-core);
+    }
+    #cursor-ring {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--cyan-glow);
+      transition: width 0.2s, height 0.2s, border-color 0.2s;
+    }
+    body:hover #cursor-ring.active {
+      width: 48px;
+      height: 48px;
+      border-color: var(--violet-core);
+      background: rgba(157, 78, 221, 0.05);
+    }
+
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .font-mono { font-family: var(--font-mono); }
+    
+    .glow-cyan {
+      text-shadow: 0 0 18px rgba(0, 243, 255, 0.6);
+    }
+    .glow-violet {
+      text-shadow: 0 0 18px rgba(157, 78, 221, 0.6);
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      background: rgba(143, 207, 155, 0.06);
+      border: 1px solid rgba(143, 207, 155, 0.22);
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cyan-core);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Glassmorphism Panel Defaults */
+    .cyber-card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    .cyber-card:hover {
+      border-color: var(--border-bright);
+      box-shadow: 0 10px 30px -10px rgba(0, 243, 255, 0.15);
+    }
+
+    .cyber-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan-core), transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .cyber-card:hover::before {
+      opacity: 1;
+    }
+
+    .btn-cyber-primary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.8rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #06070a;
+      background: var(--cyan-core);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-cyber-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 18px rgba(143, 207, 155, 0.18);
+    }
+
+    .btn-cyber-secondary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.8rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+    .btn-cyber-secondary:hover {
+      border-color: var(--violet-core);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(157, 78, 221, 0.3);
+      transform: translateY(-2px);
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      background: rgba(16, 18, 16, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-logo-box {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--cyan-core);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 243, 255, 0.08);
+      box-shadow: 0 0 12px var(--cyan-glow);
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      color: var(--cyan-core);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+    }
+    .nav-link:hover {
+      color: var(--cyan-core);
+      text-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    .sound-toggle-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: #94a3b8;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sound-toggle-btn:hover {
+      border-color: var(--cyan-core);
+      color: var(--cyan-core);
+    }
+    .sound-active-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #64748b;
+    }
+    .sound-active-indicator.enabled {
+      background-color: var(--emerald-core);
+      box-shadow: 0 0 6px var(--emerald-core);
+    }
+
+    .hero-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 100px;
+      padding-bottom: 60px;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      align-items: center;
+      gap: 3rem;
+      width: 100%;
+    }
+
+    .hero-title {
+      font-size: clamp(2.3rem, 5.2vw, 4.4rem);
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: 0;
+      margin: 1.2rem 0;
+      color: #ffffff;
+    }
+
+    .hero-gradient-text {
+      background: linear-gradient(135deg, #ffffff 20%, #cbd5e1 60%, var(--cyan-core) 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.08rem;
+      color: #94a3b8;
+      max-width: 580px;
+      margin-bottom: 2rem;
+      font-weight: 400;
+    }
+
+    /* Telemetry HUD Panel */
+    .hud-panel {
+      padding: 0;
+      background: #171a17;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hud-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.85rem 1rem;
+      margin-bottom: 0;
+      background: #202420;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #929b91;
+      letter-spacing: 0.08em;
+    }
+
+    .hud-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem 1.25rem;
+      padding: 1rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+
+    .hud-metric-item {
+      display: flex;
+      gap: 0.35rem;
+    }
+
+    .hud-metric-value {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #d9a879;
+      font-family: var(--font-mono);
+    }
+
+    .hud-metric-label {
+      font-size: 0.78rem;
+      color: #d4dbd1;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .section-title-wrap {
+      margin-bottom: 3.5rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3.2vw, 2.7rem);
+      font-weight: 800;
+      letter-spacing: 0;
+      color: #fff;
+      margin-top: 0.5rem;
+    }
+
+    .capabilities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .capability-card {
+      padding: 2.2rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      min-height: 320px;
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      color: var(--cyan-core);
+    }
+
+    .card-content-3d {
+      transform: translateZ(35px);
+      transition: transform 0.3s ease;
+    }
+
+    /* Flagship Showcase Grid */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 2rem;
+    }
+
+    .project-card {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 380px;
+    }
+
+    .tag-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1.25rem 0;
+    }
+
+    .tech-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 0.25rem 0.65rem;
+      background: rgba(143, 207, 155, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 3px;
+      color: #94a3b8;
+    }
+
+    .terminal-container {
+      background: #121512;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+      font-family: var(--font-mono);
+    }
+
+    .terminal-header {
+      background: #202420;
+      padding: 0.75rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .terminal-body {
+      padding: 1.5rem;
+      max-height: 380px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+
+    .cmd-line {
+      margin-bottom: 0.6rem;
+      word-break: break-all;
+    }
+    .cmd-prompt {
+      color: var(--cyan-core);
+    }
+    .cmd-output {
+      color: #94a3b8;
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .terminal-input-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .terminal-input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      flex: 1;
+    }
+
+    /* Custom Scrollbar for Terminal */
+    .terminal-body::-webkit-scrollbar {
+      width: 6px;
+    }
+    .terminal-body::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    /* Form Fields */
+    .cyber-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 0.9rem 1.1rem;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .cyber-input:focus {
+      border-color: var(--cyan-core);
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+    }
+
+    @media (max-width: 992px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--emerald-core);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--emerald-core);
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+
+    .editor-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-subtle);
+      background: #1c201c;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #919b91;
+    }
+    .editor-tab {
+      padding: 0.65rem 1rem;
+      border-right: 1px solid var(--border-subtle);
+    }
+    .editor-tab.active {
+      color: #e4ebe2;
+      background: #171a17;
+      border-top: 2px solid var(--cyan-core);
+      padding-top: calc(0.65rem - 2px);
+    }
+    .editor-code {
+      padding: 1.25rem 1.4rem 1.4rem;
+      color: #d4dbd1;
+      font: 0.82rem/1.9 var(--font-mono);
+      overflow-x: auto;
+    }
+    .code-line { white-space: nowrap; }
+    .code-line-number {
+      display: inline-block;
+      width: 2rem;
+      margin-right: 1rem;
+      color: #687168;
+      text-align: right;
+      user-select: none;
+    }
+    .code-keyword { color: #d9a879; }
+    .code-string { color: #a6d982; }
+    .code-function { color: #8fcfce; }
+    .editor-status {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.45rem 0.85rem;
+      background: #283b2d;
+      color: #edf7eb;
+      font: 0.65rem var(--font-mono);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (hover: none) {
+      #cursor-dot, #cursor-ring { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WebGL 3D Background Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Visual Grid & Vignette Overlays -->
+  <div class="cyber-grid-overlay"></div>
+  <div class="vignette-overlay"></div>
+
+  <!-- Native pointer keeps the interface feeling like a familiar dev workspace. -->
+
+  <header>
+    <div class="nav-container">
+      <a href="#hero" class="nav-logo" data-sound="hover">
+        <div class="nav-logo-box">ME</div>
+        <span>M•E // ARCHITECT</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#capabilities" class="nav-link" data-sound="hover">Capabilities</a></li>
+        <li><a href="#showcase" class="nav-link" data-sound="hover">Flagship Systems</a></li>
+        <li><a href="#terminal" class="nav-link" data-sound="hover">Console</a></li>
+        <li><a href="#contact" class="nav-link" data-sound="hover">Connect</a></li>
+      </ul>
+
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button id="soundToggle" class="sound-toggle-btn" title="Toggle Synthesized Audio Feedback">
+          <span class="sound-active-indicator" id="soundStatus"></span>
+          <span>AUDIO FX</span>
+        </button>
+
+        <a href="#contact" class="btn-cyber-primary" style="padding: 0.5rem 1.1rem; font-size: 0.72rem;" data-sound="click">
+          DEPLOY INQUIRY
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="hero" class="hero-section">
+      <div class="content-wrapper">
+        <div class="hero-grid">
+          <div>
+            <div class="badge-pill">
+              <span class="pulse-dot"></span>
+                OPEN TO WORK // RABAT, MA
+            </div>
+
+            <h1 class="hero-title">
+              BUILDING <span class="hero-gradient-text glow-cyan">DIGITAL PRODUCTS</span> THAT SCALE
+            </h1>
+
+            <p class="hero-subtitle">
+              Full-stack developer focused on reliable web apps, thoughtful interfaces, and the systems behind them. From first commit to production deployment.
+            </p>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+              <a href="#showcase" class="btn-cyber-primary" data-sound="click">
+                <span>EXPLORE SYSTEMS</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="#terminal" class="btn-cyber-secondary" data-sound="click">
+                <span>OPEN TERMINAL</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Developer profile shown in a compact editor window -->
+          <div class="hud-panel cyber-card" id="hudPanel">
+            <div class="hud-header">
+              <span>marouane-dev / portfolio</span>
+              <span style="color: var(--cyan-core);">● main</span>
+            </div>
+            <div class="editor-tabs">
+              <span class="editor-tab active">profile.ts</span>
+              <span class="editor-tab">stack.json</span>
+            </div>
+            <div class="editor-code" aria-label="Developer profile code preview">
+              <div class="code-line"><span class="code-line-number">1</span><span class="code-keyword">const</span> developer = {</div>
+              <div class="code-line"><span class="code-line-number">2</span>&nbsp;&nbsp;name: <span class="code-string">'Marouane'</span>,</div>
+              <div class="code-line"><span class="code-line-number">3</span>&nbsp;&nbsp;role: <span class="code-string">'Full-stack developer'</span>,</div>
+              <div class="code-line"><span class="code-line-number">4</span>&nbsp;&nbsp;location: <span class="code-string">'Rabat, Morocco'</span>,</div>
+              <div class="code-line"><span class="code-line-number">5</span>&nbsp;&nbsp;stack: [<span class="code-string">'React'</span>, <span class="code-string">'Node.js'</span>, <span class="code-string">'PostgreSQL'</span>],</div>
+              <div class="code-line"><span class="code-line-number">6</span>&nbsp;&nbsp;available: <span class="code-keyword">true</span>,</div>
+              <div class="code-line"><span class="code-line-number">7</span>&nbsp;&nbsp;ship: <span class="code-function">() =&gt; 'production'</span></div>
+              <div class="code-line"><span class="code-line-number">8</span>};</div>
+            </div>
+            <div class="editor-status">
+              <span>✓ No errors</span>
+              <span>TypeScript · UTF-8 · main</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="capabilities" style="padding: 100px 0;">
+      <div class="content-wrapper">
+        <div class="section-title-wrap">
+          <div class="badge-pill">CORE SPECTRUM</div>
+          <h2 class="section-title">TECHNICAL ARCHITECTURE DIMENSIONS</h2>
+          <p style="color: #94a3b8; max-width: 600px; margin-top: 0.5rem;">
+            End-to-end engineering discipline across web stacks, database management, and interactive digital branding.
+          </p>
+        </div>
+
+        <div class="capabilities-grid">
+          <!-- Dimension 1: Full-Stack Web -->
+          <div class="cyber-card capability-card tilt-card" data-sound="hover">
+            <div class="card-content-3d">
+              <div class="card-icon">⚡</div>
+              <h3 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem;">Full-Stack Web Architecture</h3>
+              <p style="color: #94a3b8; font-size: 0.88rem; line-height: 1.6;">
+                Building scalable web applications with React, Vite, Node.js, and Supabase. Relational schema modeling in PostgreSQL, authentication rules, and low-latency API layers.
+              </p>
+            </div>
+            <div style="margin-top: 1.5rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan-core);">
+              STACK: REACT // VITE // SUPABASE // REST
+            </div>
+          </div>
+
+          <!-- Dimension 2: Enterprise Systems -->
+          <div class="cyber-card capability-card tilt-card" data-sound="hover">
+            <div class="card-content-3d">
+              <div class="card-icon" style="color: var(--violet-core); border-color: rgba(157,78,221,0.3);">🏛️</div>
+              <h3 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem;">Enterprise Corporate Platforms</h3>
+              <p style="color: #94a3b8; font-size: 0.88rem; line-height: 1.6;">
+                Comprehensive corporate digital infrastructure. Multi-division service storytelling, infrastructure presentation, and technical branding for telecom and engineering sectors.
+              </p>
+            </div>
+            <div style="margin-top: 1.5rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--violet-core);">
+              DOMAIN: ENTERPRISE // SCALABILITY // CMS
+            </div>
+          </div>
+
+          <!-- Dimension 3: Operational POS Systems -->
+          <div class="cyber-card capability-card tilt-card" data-sound="hover">
+            <div class="card-content-3d">
+              <div class="card-icon" style="color: var(--emerald-core); border-color: rgba(16,185,129,0.3);">📦</div>
+              <h3 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem;">Modular POS & Cloud Engines</h3>
+              <p style="color: #94a3b8; font-size: 0.88rem; line-height: 1.6;">
+                Point of Sale systems with isolated inventory data pipelines, read-only demo states, and responsive cashier/manager interfaces tailored for multi-terminal retail.
+              </p>
+            </div>
+            <div style="margin-top: 1.5rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--emerald-core);">
+              FOCUS: REAL-TIME DATA // INVENTORY // ROLES
+            </div>
+          </div>
+
+          <!-- Dimension 4: Visual UI & AI Acceleration -->
+          <div class="cyber-card capability-card tilt-card" data-sound="hover">
+            <div class="card-content-3d">
+              <div class="card-icon">✨</div>
+              <h3 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem;">Interactive UI & AI Prototyping</h3>
+              <p style="color: #94a3b8; font-size: 0.88rem; line-height: 1.6;">
+                Rapid concept-to-deployment UI engineering. Dark mode micro-interactions, WebGL/Canvas visualizers, and AI-accelerated interface drafting pipelines.
+              </p>
+            </div>
+            <div style="margin-top: 1.5rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan-core);">
+              PIPELINE: THREE.JS // WEB AUDIO // TAILWIND
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="showcase" style="padding: 100px 0; background: linear-gradient(180deg, transparent, rgba(11, 13, 20, 0.4), transparent);">
+      <div class="content-wrapper">
+        <div class="section-title-wrap">
+          <div class="badge-pill">FLAGSHIP REPOSITORIES</div>
+          <h2 class="section-title">DEPLOYED PRODUCTION SYSTEMS</h2>
+          <p style="color: #94a3b8; max-width: 600px; margin-top: 0.5rem;">
+            Real-world digital infrastructure built for scale, resilience, and user conversion.
+          </p>
+        </div>
+
+        <div class="projects-grid">
+          <!-- Project 1 -->
+          <div class="cyber-card project-card tilt-card" data-sound="hover">
+            <div class="card-content-3d">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="font-mono" style="font-size: 0.7rem; color: var(--cyan-core); text-transform: uppercase;">ENTERPRISE PLATFORM</span>
+                <span style="font-size: 0.75rem; color: var(--emerald-core); font-family: var(--font-mono);">● DEPLOYED</span>
+              </div>
+              
+              <h3 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 0.8rem;">Multi-Technical Infrastructure Web Portal</h3>
+              <p style="color: #94a3b8; font-size: 0.88rem; margin-top: 0.75rem;">
+                A comprehensive digital corporate presence designed for telecommunications, high-voltage civil engineering, and network installation divisions. Built with instant sub-second transitions and interactive service routing.
+              </p>
+
+              <div class="tag-cluster">
+                <span class="tech-tag">React</span>
+                <span class="tech-tag">Vite</span>
+                <span class="tech-tag">Tailwind CSS</span>
+                <span class="tech-tag">Corporate UX</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem;">
+              <a href="#contact" class="btn-cyber-primary" style="padding: 0.6rem 1.2rem; font-size: 0.75rem;" data-sound="click">Review Specs</a>
+              <span class="font-mono" style="font-size: 0.75rem; color: #64748b;">99.9% Lighthouse</span>
+            </div>
+          </div>
+
+          <!-- Project 2 -->
+          <div class="cyber-card project-card tilt-card" data-sound="hover">
+            <div class="card-content-3d">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="font-mono" style="font-size: 0.7rem; color: var(--violet-core); text-transform: uppercase;">COMMERCIAL ENGINE</span>
+                <span style="font-size: 0.75rem; color: var(--emerald-core); font-family: var(--font-mono);">● SANDBOX SYNC</span>
+              </div>
+              
+              <h3 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 0.8rem;">Modular Cloud POS & Inventory System</h3>
+              <p style="color: #94a3b8; font-size: 0.88rem; margin-top: 0.75rem;">
+                A robust, multi-branch point-of-sale web application featuring real-time receipt generation, cashier shift audit logs, secure stock management, and an isolated read-only preview branch for public validation.
+              </p>
+
+              <div class="tag-cluster">
+                <span class="tech-tag">React</span>
+                <span class="tech-tag">Supabase</span>
+                <span class="tech-tag">PostgreSQL</span>
+                <span class="tech-tag">State Logic</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem;">
+              <a href="#contact" class="btn-cyber-primary" style="padding: 0.6rem 1.2rem; font-size: 0.75rem;" data-sound="click">Launch Demo</a>
+              <span class="font-mono" style="font-size: 0.75rem; color: #64748b;">Isolated Schemas</span>
+            </div>
+          </div>
+
+          <!-- Project 3 -->
+          <div class="cyber-card project-card tilt-card" data-sound="hover">
+            <div class="card-content-3d">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="font-mono" style="font-size: 0.7rem; color: var(--cyan-core); text-transform: uppercase;">DATA ARCHITECTURE</span>
+                <span style="font-size: 0.75rem; color: var(--emerald-core); font-family: var(--font-mono);">● ACTIVE</span>
+              </div>
+              
+              <h3 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 0.8rem;">Relational Web Guidance Engine</h3>
+              <p style="color: #94a3b8; font-size: 0.88rem; margin-top: 0.75rem;">
+                A structured digital guidance repository delivering curated career, internship, and engineering roadmaps. Backed by PostgreSQL with dynamic filtering, full text search, and rapid client caching.
+              </p>
+
+              <div class="tag-cluster">
+                <span class="tech-tag">PostgreSQL</span>
+                <span class="tech-tag">Supabase Auth</span>
+                <span class="tech-tag">Vercel Edge</span>
+                <span class="tech-tag">REST API</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem;">
+              <a href="#contact" class="btn-cyber-primary" style="padding: 0.6rem 1.2rem; font-size: 0.75rem;" data-sound="click">Inspect Flow</a>
+              <span class="font-mono" style="font-size: 0.75rem; color: #64748b;">12ms Edge Sync</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="terminal" style="padding: 100px 0;">
+      <div class="content-wrapper">
+        <div class="section-title-wrap">
+          <div class="badge-pill">SHELL INTERFACE</div>
+          <h2 class="section-title">COMMAND CORE TERMINAL</h2>
+          <p style="color: #94a3b8; max-width: 600px; margin-top: 0.5rem;">
+            Query the architecture database directly. Type commands like <span style="color: var(--cyan-core); font-family: var(--font-mono);">help</span>, <span style="color: var(--cyan-core); font-family: var(--font-mono);">projects</span>, or <span style="color: var(--cyan-core); font-family: var(--font-mono);">status</span>.
+          </p>
+        </div>
+
+        <div class="terminal-container">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="terminal-dot dot-red"></span>
+              <span class="terminal-dot dot-yellow"></span>
+              <span class="terminal-dot dot-green"></span>
+            </div>
+            <div style="font-size: 0.75rem; color: #64748b;">marouane@core-terminal: ~/portfolio (zsh)</div>
+            <div style="font-size: 0.7rem; color: var(--emerald-core);">SECURE SESSION</div>
+          </div>
+
+          <div class="terminal-body" id="terminalOutput">
+            <div class="cmd-output">System initialized. Connected to Core Kernel v4.2.9.</div>
+            <div class="cmd-output">Type <span style="color: var(--cyan-core);">help</span> to view available operations, or execute <span style="color: var(--cyan-core);">contact</span> to dispatch an alert.</div>
+          </div>
+
+          <div style="padding: 0.8rem 1.5rem; background: #0b0e17; border-top: 1px solid var(--border-subtle);">
+            <div class="terminal-input-row">
+              <span class="cmd-prompt">visitor@core:~$</span>
+              <input type="text" id="terminalInput" class="terminal-input" placeholder="Type a command and press Enter..." autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" style="padding: 100px 0 140px;">
+      <div class="content-wrapper">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 3.5rem;">
+          <div>
+            <div class="badge-pill">TRANSMISSION LINK</div>
+            <h2 class="section-title">INITIALIZE COLLABORATION</h2>
+            <p style="color: #94a3b8; margin: 1rem 0 2rem; line-height: 1.7;">
+              Currently open for full-stack contracts, enterprise web migrations, modern UI redesigns, and high-performance frontend architecture.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem; font-family: var(--font-mono); font-size: 0.85rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem; color: #cbd5e1;">
+                <span style="color: var(--cyan-core);">📍 BASE:</span>
+                <span>Rabat, Morocco (UTC+1)</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.75rem; color: #cbd5e1;">
+                <span style="color: var(--cyan-core);">⚡ AVAILABILITY:</span>
+                <span style="color: var(--emerald-core);">Immediate Q4 Engagements</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.75rem; color: #cbd5e1;">
+                <span style="color: var(--cyan-core);">🔑 PUBLIC REPOS:</span>
+                <span>github.com/marouane-dev</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Direct Dispatch Form -->
+          <div class="cyber-card" style="padding: 2.5rem;">
+            <form id="contactForm" onsubmit="event.preventDefault(); window.handleTransmission();">
+              <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <div>
+                  <label class="font-mono" style="font-size: 0.72rem; color: #94a3b8; display: block; margin-bottom: 0.4rem;">IDENTIFIER / NAME</label>
+                  <input type="text" id="senderName" required class="cyber-input" placeholder="e.g. Alex Mercer">
+                </div>
+                <div>
+                  <label class="font-mono" style="font-size: 0.72rem; color: #94a3b8; display: block; margin-bottom: 0.4rem;">ELECTRONIC MAIL</label>
+                  <input type="email" id="senderEmail" required class="cyber-input" placeholder="alex@company.io">
+                </div>
+                <div>
+                  <label class="font-mono" style="font-size: 0.72rem; color: #94a3b8; display: block; margin-bottom: 0.4rem;">SYSTEM REQUIREMENTS / MESSAGE</label>
+                  <textarea id="senderMsg" rows="4" required class="cyber-input" placeholder="Describe the platform architecture, timeline, or design scope..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-cyber-primary" style="width: 100%;" data-sound="click">
+                  <span>DISPATCH SIGNAL</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
+            </form>
+            <div id="formSuccess" style="display: none; margin-top: 1rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--emerald-core); text-align: center;">
+              ✓ SIGNAL TRANSMITTED TO CENTRAL RECEPTACLE
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Web Audio Synthesizer for high-tech UI feedback without external audio files
+    const AudioEngine = {
+      ctx: null,
+      enabled: false,
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+      },
+
+      toggle() {
+        this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+        this.enabled = !this.enabled;
+        return this.enabled;
+      },
+
+      playHover() {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(620, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(840, this.ctx.currentTime + 0.04);
+          
+          gain.gain.setValueAtTime(0.015, this.ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.04);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.04);
+        } catch(e) {}
+      },
+
+      playClick() {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.08);
+
+          gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.08);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.08);
+        } catch(e) {}
+      },
+
+      playSuccess() {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.02, now + i * 0.07);
+            gain.gain.linearRampToValueAtTime(0, now + i * 0.07 + 0.18);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + i * 0.07);
+            osc.stop(now + i * 0.07 + 0.18);
+          });
+        } catch(e) {}
+      }
+    };
+
+    // Audio Toggle Listener
+    const soundToggleBtn = document.getElementById('soundToggle');
+    const soundIndicator = document.getElementById('soundStatus');
+    soundToggleBtn.addEventListener('click', () => {
+      const state = AudioEngine.toggle();
+      if (state) {
+        soundIndicator.classList.add('enabled');
+        AudioEngine.playSuccess();
+      } else {
+        soundIndicator.classList.remove('enabled');
+      }
+    });
+
+    // Attach sound hooks to buttons
+    document.querySelectorAll('[data-sound="hover"]').forEach(el => {
+      el.addEventListener('mouseenter', () => AudioEngine.playHover());
+    });
+    document.querySelectorAll('[data-sound="click"]').forEach(el => {
+      el.addEventListener('click', () => AudioEngine.playClick());
+    });
+
+    const tiltCards = document.querySelectorAll('.tilt-card');
+    tiltCards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((y - centerY) / centerY) * -12;
+        const rotateY = ((x - centerX) / centerX) * 12;
+
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+      });
+    });
+
+    const terminalInput = document.getElementById('terminalInput');
+    const terminalOutput = document.getElementById('terminalOutput');
+
+    const commands = {
+      help: () => `AVAILABLE DIRECTIVES:\n- <span style="color:var(--cyan-core);">projects</span>: Enumerate shipped production repositories\n- <span style="color:var(--cyan-core);">stack</span>: Inspect runtime & database tools\n- <span style="color:var(--cyan-core);">status</span>: Query system health & location telemetry\n- <span style="color:var(--cyan-core);">contact</span>: Reveal direct communications bridge\n- <span style="color:var(--cyan-core);">clear</span>: Flush console buffer`,
+      projects: () => `DEPLOYED SYSTEMS:\n[01] Multi-Technical Enterprise Web Platform (Civil Engineering/Telecom)\n[02] Modular Cloud POS & Inventory System (PostgreSQL / React)\n[03] Relational Web Guidance Engine (Edge APIs / Supabase)`,
+      stack: () => `TECHNOLOGY MATRIX:\nFrontend: React, Vite, Tailwind CSS, Three.js, ES6+\nBackend: Node.js, RESTful APIs, Supabase, PostgreSQL\nCloud & Ops: Vercel Production Pipelines, Git/GitHub`,
+      status: () => `STATUS: 100% OPERATIONAL\nUPTIME: 99.9%\nLOCATION: Rabat, Morocco (UTC+1)\nLATENCY: &lt; 50ms (Edge Cache Active)`,
+      contact: () => `DIRECT CHANNELS:\nEmail: Contact form below\nLocation: Rabat, Morocco\nGitHub: github.com/marouane-dev`,
+      clear: () => {
+        terminalOutput.innerHTML = '';
+        return '';
+      }
+    };
+
+    terminalInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const val = terminalInput.value.trim().toLowerCase();
+        if (!val) return;
+
+        AudioEngine.playClick();
+
+        const cmdRow = document.createElement('div');
+        cmdRow.className = 'cmd-line';
+        cmdRow.innerHTML = `<span class="cmd-prompt">visitor@core:~$</span> ${terminalInput.value}`;
+        terminalOutput.appendChild(cmdRow);
+
+        const outRow = document.createElement('div');
+        outRow.className = 'cmd-output';
+
+        if (commands[val]) {
+          const res = commands[val]();
+          if (val !== 'clear') {
+            outRow.innerHTML = res.replace(/\n/g, '<br>');
+            terminalOutput.appendChild(outRow);
+          }
+        } else {
+          outRow.innerHTML = `Command not recognized: "${val}". Type <span style="color:var(--cyan-core);">help</span> for directives.`;
+          terminalOutput.appendChild(outRow);
+        }
+
+        terminalInput.value = '';
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+      }
+    });
+
+    window.handleTransmission = () => {
+      AudioEngine.playSuccess();
+      const form = document.getElementById('contactForm');
+      const success = document.getElementById('formSuccess');
+      form.style.opacity = '0.5';
+      form.style.pointerEvents = 'none';
+      success.style.display = 'block';
+    };
+
+    let scene, camera, renderer;
+    let computerGroup, streamGroup, streamParticles;
+    let streamPaths = [];
+    let targetMouseX = 0, targetMouseY = 0;
+    let curMouseX = 0, curMouseY = 0;
+
+    function initThree() {
+      const canvas = document.getElementById('webgl-canvas');
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      // 1. Scene & Camera
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+      camera.position.z = 22;
+
+      // 2. Renderer
+      renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        alpha: true,
+        antialias: true
+      });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // 3. Laptop centerpiece
+      scene.add(new THREE.AmbientLight(0xdce8dc, 0.85));
+      const keyLight = new THREE.DirectionalLight(0xd8f0d8, 2.1);
+      keyLight.position.set(-5, 8, 12);
+      scene.add(keyLight);
+
+      computerGroup = new THREE.Group();
+      const addLaptopPart = (width, height, depth, material, x, y, z, parent = computerGroup) => {
+        const part = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), material);
+        part.position.set(x, y, z);
+        parent.add(part);
+        return part;
+      };
+
+      const caseMaterial = new THREE.MeshStandardMaterial({ color: 0x263029, metalness: 0.55, roughness: 0.34 });
+      const trimMaterial = new THREE.MeshStandardMaterial({ color: 0x111713, metalness: 0.35, roughness: 0.45 });
+      const indicatorMaterial = new THREE.MeshBasicMaterial({ color: 0x8fcf9b });
+      const keyMaterial = new THREE.MeshStandardMaterial({ color: 0x3b473e, metalness: 0.25, roughness: 0.55 });
+
+      addLaptopPart(9.65, 5.85, 0.42, caseMaterial, 0, 1.15, -0.38);
+      addLaptopPart(9.15, 5.35, 0.06, trimMaterial, 0, 1.15, -0.14);
+
+      const screenCanvas = document.createElement('canvas');
+      screenCanvas.width = 1024;
+      screenCanvas.height = 576;
+      const screenContext = screenCanvas.getContext('2d');
+      screenContext.fillStyle = '#08110b';
+      screenContext.fillRect(0, 0, screenCanvas.width, screenCanvas.height);
+      screenContext.strokeStyle = 'rgba(143, 207, 155, 0.08)';
+      screenContext.lineWidth = 1;
+      for (let x = 0; x <= screenCanvas.width; x += 48) {
+        screenContext.beginPath();
+        screenContext.moveTo(x, 0);
+        screenContext.lineTo(x, screenCanvas.height);
+        screenContext.stroke();
+      }
+      for (let y = 0; y <= screenCanvas.height; y += 48) {
+        screenContext.beginPath();
+        screenContext.moveTo(0, y);
+        screenContext.lineTo(screenCanvas.width, y);
+        screenContext.stroke();
+      }
+
+      const circuitRoutes = [
+        [[72, 120], [154, 120], [154, 174], [230, 174]],
+        [[72, 228], [180, 228], [180, 274], [266, 274]],
+        [[952, 142], [876, 142], [876, 190], [804, 190]],
+        [[952, 246], [846, 246], [846, 296], [772, 296]],
+        [[128, 440], [220, 440], [220, 398], [292, 398]],
+        [[896, 434], [812, 434], [812, 394], [734, 394]]
+      ];
+      circuitRoutes.forEach((route, index) => {
+        screenContext.beginPath();
+        screenContext.moveTo(route[0][0], route[0][1]);
+        route.slice(1).forEach(([x, y]) => screenContext.lineTo(x, y));
+        screenContext.strokeStyle = index % 2 === 0 ? '#6cab78' : '#b78c61';
+        screenContext.lineWidth = 3;
+        screenContext.stroke();
+        const [padX, padY] = route[route.length - 1];
+        screenContext.beginPath();
+        screenContext.arc(padX, padY, 5, 0, Math.PI * 2);
+        screenContext.fillStyle = '#a6d982';
+        screenContext.fill();
+      });
+
+      screenContext.textAlign = 'center';
+      screenContext.font = '700 92px "JetBrains Mono", monospace';
+      screenContext.shadowColor = 'rgba(143, 207, 155, 0.7)';
+      screenContext.shadowBlur = 24;
+      screenContext.fillStyle = '#c8f0ce';
+      screenContext.fillText('WELCOME', 512, 300);
+      screenContext.shadowBlur = 0;
+      screenContext.font = '500 20px "JetBrains Mono", monospace';
+      screenContext.fillStyle = '#8fcf9b';
+      screenContext.fillText('DEVELOPER PORTFOLIO // SYSTEM ONLINE', 512, 354);
+
+      const screenTexture = new THREE.CanvasTexture(screenCanvas);
+      const screenMaterial = new THREE.MeshBasicMaterial({ map: screenTexture });
+      const screen = new THREE.Mesh(new THREE.PlaneGeometry(8.78, 4.94), screenMaterial);
+      screen.position.set(0, 1.15, -0.095);
+      computerGroup.add(screen);
+
+      const hinge = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 9.1, 20), trimMaterial);
+      hinge.rotation.z = Math.PI / 2;
+      hinge.position.set(0, -1.78, -0.18);
+      computerGroup.add(hinge);
+
+      const keyboardDeck = new THREE.Group();
+      keyboardDeck.position.set(0, -2.32, 1.5);
+      keyboardDeck.rotation.x = 0.48;
+      computerGroup.add(keyboardDeck);
+      addLaptopPart(9.6, 0.22, 3.25, caseMaterial, 0, 0, 0, keyboardDeck);
+
+      for (let row = 0; row < 4; row++) {
+        for (let column = 0; column < 14; column++) {
+          const key = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.08, 0.3), keyMaterial);
+          key.position.set(-3.85 + column * 0.59, 0.15, -1.15 + row * 0.42);
+          keyboardDeck.add(key);
+        }
+      }
+      addLaptopPart(2.8, 0.035, 0.75, trimMaterial, 0, 0.15, 1.0, keyboardDeck);
+      addLaptopPart(0.14, 0.08, 0.06, indicatorMaterial, 4.58, 0.15, -1.48, keyboardDeck);
+
+      computerGroup.rotation.x = -0.08;
+      scene.add(computerGroup);
+
+      // 4. PCB traces with end-to-end tracer particles
+      const streamCount = 12;
+      const tracerCount = 3;
+      const linePositions = [];
+      const viaPositions = [];
+      const tracerPositions = new Float32Array(streamCount * tracerCount * 3);
+      streamPaths = [];
+      streamGroup = new THREE.Group();
+
+      for (let i = 0; i < streamCount; i++) {
+        const laneY = (i - (streamCount - 1) / 2) * 5;
+        const jogY = laneY + (i % 2 === 0 ? 2 : -2);
+        const route = [
+          new THREE.Vector3(-45, laneY, -12),
+          new THREE.Vector3(-30, laneY, -12),
+          new THREE.Vector3(-30, jogY, -12),
+          new THREE.Vector3(-16, jogY, -12),
+          new THREE.Vector3(-16, laneY, -12),
+          new THREE.Vector3(16, laneY, -12),
+          new THREE.Vector3(16, jogY, -12),
+          new THREE.Vector3(30, jogY, -12),
+          new THREE.Vector3(30, laneY, -12),
+          new THREE.Vector3(45, laneY, -12)
+        ];
+        const segmentLengths = [];
+        let totalLength = 0;
+
+        for (let pointIndex = 0; pointIndex < route.length - 1; pointIndex++) {
+          const start = route[pointIndex];
+          const end = route[pointIndex + 1];
+          linePositions.push(start.x, start.y, start.z, end.x, end.y, end.z);
+          const segmentLength = start.distanceTo(end);
+          segmentLengths.push(segmentLength);
+          totalLength += segmentLength;
+
+          if (pointIndex > 0) {
+            viaPositions.push(start.x, start.y, start.z);
+          }
+        }
+
+        streamPaths.push({ route, segmentLengths, totalLength, speed: 0.09, offset: i / streamCount });
+      }
+
+      const lineGeometry = new THREE.BufferGeometry();
+      lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+      const lineMaterial = new THREE.LineBasicMaterial({
+        color: 0x8fcf9b,
+        transparent: true,
+        opacity: 0.14
+      });
+      streamGroup.add(new THREE.LineSegments(lineGeometry, lineMaterial));
+
+      const viaGeometry = new THREE.BufferGeometry();
+      viaGeometry.setAttribute('position', new THREE.Float32BufferAttribute(viaPositions, 3));
+      const viaMaterial = new THREE.PointsMaterial({
+        color: 0xd9a879,
+        size: 0.3,
+        transparent: true,
+        opacity: 0.42,
+        depthWrite: false
+      });
+      streamGroup.add(new THREE.Points(viaGeometry, viaMaterial));
+
+      const tracerGeometry = new THREE.BufferGeometry();
+      tracerGeometry.setAttribute('position', new THREE.BufferAttribute(tracerPositions, 3));
+      const tracerMaterial = new THREE.PointsMaterial({
+        color: 0xa6d982,
+        size: 0.22,
+        transparent: true,
+        opacity: 0.9,
+        depthWrite: false
+      });
+      streamParticles = new THREE.Points(tracerGeometry, tracerMaterial);
+      streamGroup.add(streamParticles);
+      scene.add(streamGroup);
+
+      // Mouse Move Listener for 3D Parallax
+      window.addEventListener('mousemove', (e) => {
+        targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+      });
+
+      // Resize Listener
+      window.addEventListener('resize', onWindowResize);
+      
+      // Scroll Parallax Listener
+      window.addEventListener('scroll', () => {
+        const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+        camera.position.y = -scrollPercent * 8;
+        camera.position.z = 22 + scrollPercent * 4;
+      });
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    const clock = new THREE.Clock();
+
+    function renderLoop() {
+      requestAnimationFrame(renderLoop);
+
+      const elapsedTime = clock.getElapsedTime();
+
+      // Smooth mouse interpolation
+      curMouseX += (targetMouseX - curMouseX) * 0.05;
+      curMouseY += (targetMouseY - curMouseY) * 0.05;
+
+      if (computerGroup) {
+        computerGroup.rotation.y = Math.sin(elapsedTime * 0.35) * 0.08 + curMouseX * 0.12;
+        computerGroup.rotation.x = -0.08 + curMouseY * 0.05;
+      }
+
+      if (streamGroup) {
+        streamGroup.rotation.y = elapsedTime * 0.02 + curMouseX * 0.05;
+        streamGroup.rotation.x = curMouseY * 0.1;
+      }
+
+      if (streamParticles) {
+        const positions = streamParticles.geometry.attributes.position;
+        streamPaths.forEach((path, pathIndex) => {
+          for (let tracerIndex = 0; tracerIndex < 3; tracerIndex++) {
+            const particleIndex = pathIndex * 3 + tracerIndex;
+            const progress = ((elapsedTime * path.speed + path.offset - tracerIndex * 0.045) % 1 + 1) % 1;
+            let distance = progress * path.totalLength;
+            let segmentIndex = 0;
+
+            while (segmentIndex < path.segmentLengths.length - 1 && distance > path.segmentLengths[segmentIndex]) {
+              distance -= path.segmentLengths[segmentIndex];
+              segmentIndex++;
+            }
+
+            const segmentProgress = distance / path.segmentLengths[segmentIndex];
+            const start = path.route[segmentIndex];
+            const end = path.route[segmentIndex + 1];
+            positions.setXYZ(
+              particleIndex,
+              start.x + (end.x - start.x) * segmentProgress,
+              start.y + (end.y - start.y) * segmentProgress,
+              start.z + (end.z - start.z) * segmentProgress
+            );
+          }
+        });
+        positions.needsUpdate = true;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    // Initialize when window is ready
+    window.onload = function() {
+      initThree();
+      renderLoop();
+    };
+  </script>
+</body>
+</html>
