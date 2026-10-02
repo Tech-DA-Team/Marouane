@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cyberpunk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALEX VANCE // 3D Creative Technologist & Web Architect</title>
+  <meta name="description" content="Immersive 3D interactive portfolio featuring cutting-edge WebGL, Three.js shaders, and modern full-stack web experiences.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- WebGL 3D Canvas Background -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Ambient Light & Film Grain Glow -->
+  <div class="ambient-glow"></div>
+  <div class="noise-overlay"></div>
+
+  <!-- Custom Glowing Cursor -->
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+
+  <!-- FLOATING NAVIGATION BAR -->
+  <header class="navbar-container">
+    <nav class="navbar">
+      <a href="#hero" class="nav-brand">
+        <div class="brand-cube">
+          <div class="brand-dot"></div>
+        </div>
+        <span>AV.3D</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#hero" class="nav-link active">Core</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#skills" class="nav-link">Skills</a></li>
+        <li><a href="#projects" class="nav-link">Projects</a></li>
+        <li><a href="#experience" class="nav-link">Timeline</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+
+      <div class="nav-controls">
+        <button id="sound-toggle-btn" class="nav-icon-btn" aria-label="Toggle Sound">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </button>
+
+        <a href="#contact" class="btn-hire">Initiate Project</a>
+
+        <button class="mobile-menu-btn" aria-label="Open Navigation">☰</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ==========================================================================
+         HERO SECTION
+         ========================================================================== -->
+    <section id="hero" class="hero-section">
+      <div class="container">
+        <div class="hero-grid">
+          
+          <div class="hero-content">
+            <div class="hero-status-pill">
+              <span class="radar-pulse"></span>
+              <span>AVAILABLE FOR WORLDWIDE ENGAGEMENT</span>
+            </div>
+
+            <h1 class="hero-title">
+              CRAFTING NEXT-GEN <br>
+              <span class="gradient-text">3D DIGITAL WORLDS</span>
+            </h1>
+
+            <div class="hero-typewriter">
+              <span>&gt; </span>
+              <span id="typewriter-text">Creative Technologist</span>
+              <span class="typewriter-cursor"></span>
+            </div>
+
+            <p class="hero-description">
+              Pioneering hyper-performant WebGL architectures, custom GLSL shaders, and reactive 3D interfaces that bridge the boundary between imagination and reality.
+            </p>
+
+            <div class="hero-actions">
+              <a href="#projects" class="btn-primary">
+                <span>Explore Showcase</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+              <a href="#contact" class="btn-secondary">
+                <span>Let's Talk</span>
+              </a>
+            </div>
+
+            <!-- 3D Interactive Lab Controller -->
+            <div class="scene-lab-panel">
+              <div class="lab-title">
+                <span>⚡ 3D LAB:</span> Switch 3D Model
+              </div>
+
+              <div class="lab-controls">
+                <button class="lab-btn active" data-model="laptop">💻 Cyber Laptop</button>
+                <button class="lab-btn" data-model="brackets">&lt;/&gt; Dev Tag</button>
+                <button class="lab-btn" data-model="ui-stack">🎨 UI/UX Stack</button>
+                <button class="lab-btn" data-model="devices">📱 Responsive Rig</button>
+                <button class="lab-btn" id="btn-toggle-wireframe">Wireframe: OFF</button>
+              </div>
+
+              <div class="lab-theme-dots">
+                <div class="theme-dot dot-cyber active" data-theme="cyberpunk" title="Cyberpunk Theme"></div>
+                <div class="theme-dot dot-matrix" data-theme="matrix" title="Matrix Theme"></div>
+                <div class="theme-dot dot-violet" data-theme="violet" title="Neon Violet Theme"></div>
+                <div class="theme-dot dot-solar" data-theme="solar" title="Solar Flare Theme"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero 3D Interactive Stage -->
+          <div class="hero-3d-interactive-card interactive-3d-zone">
+            <!-- Floating Holographic HUD stats -->
+            <div class="floating-3d-hud">
+              <div class="hud-item">
+                <span>3D RIG:</span>
+                <span class="hud-val">DEV & DESIGN CAD</span>
+              </div>
+              <div class="hud-item">
+                <span>DISPLAY ENGINE:</span>
+                <span class="hud-val">LIVE SYNTAX 60FPS</span>
+              </div>
+              <div class="hud-item">
+                <span>INTERACTION:</span>
+                <span class="hud-val">DRAG & TILT 3D</span>
+              </div>
+              <div class="hud-item">
+                <span>ORBITING STACK:</span>
+                <span class="hud-val">FIGMA • HTML • CSS • JS • REACT • TS</span>
+              </div>
+            </div>
+
+            <div class="interactive-drag-prompt">
+              <svg class="drag-icon-rotate" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>Click & Drag to Rotate in 3D</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         ABOUT SECTION
+         ========================================================================== -->
+    <section id="about" class="about-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// ARCHITECTURE & PROFILE</span>
+          <h2 class="section-title">ENGINEERING THE UNCANNY</h2>
+          <p class="section-desc">Merging mathematical precision with bold aesthetic storytelling.</p>
+        </div>
+
+        <div class="about-grid">
+          <!-- 3D Interactive Terminal Window -->
+          <div class="terminal-window">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <div class="terminal-title">bash - session://alex@matrix-node</div>
+            </div>
+            <div class="terminal-body">
+              <p><span class="t-prompt">visitor@portfolio:~$</span> <span class="t-cmd">whoami</span></p>
+              <p><span class="t-string">"Alex Vance — Creative Technologist & 3D Web Systems Architect"</span></p>
+              <br>
+              <p><span class="t-prompt">visitor@portfolio:~$</span> <span class="t-cmd">cat profile.json</span></p>
+              <p class="t-comment">// Core Philosophy & Coordinates</p>
+              <p>{<br>
+                &nbsp;&nbsp;<span class="t-key">"focus"</span>: <span class="t-string">"Interactive WebGL, Real-time 3D, High-Load Web Apps"</span>,<br>
+                &nbsp;&nbsp;<span class="t-key">"experience"</span>: <span class="t-string">"5+ Years Crafting Digital Excellence"</span>,<br>
+                &nbsp;&nbsp;<span class="t-key">"renderingEngines"</span>: [<span class="t-string">"Three.js"</span>, <span class="t-string">"GLSL Shaders"</span>, <span class="t-string">"WebGPU"</span>],<br>
+                &nbsp;&nbsp;<span class="t-key">"mindset"</span>: <span class="t-string">"Performant, tactile, unforgettable experiences."</span><br>
+              }</p>
+              <br>
+              <p><span class="t-prompt">visitor@portfolio:~$</span> <span class="t-cmd">status --all</span></p>
+              <p><span class="t-prompt">●</span> All systems optimal. Ready for complex challenges.</p>
+            </div>
+          </div>
+
+          <!-- 3D Holographic Profile Card -->
+          <div class="holo-profile-card">
+            <div class="profile-avatar-box">
+              <div class="avatar-inner">⚡</div>
+            </div>
+            <h3 class="holo-bio-title">Alex Vance</h3>
+            <p class="holo-bio-role">&lt;Lead 3D Engineer / Creative Coder&gt;</p>
+            <p class="holo-bio-text">
+              Specialized in pushing browsers to their absolute graphics limits without sacrificing fluidity or accessibility. From bespoke 3D e-commerce configuration engines to sound-reactive WebGL visualizations, I engineer websites that look like the future.
+            </p>
+            <div class="hero-actions">
+              <a href="#contact" class="btn-primary">Download Dossier / CV</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D Stat Counters Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" data-target="50" data-suffix="+">0</div>
+            <div class="stat-label">Projects Shipped</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" data-target="5" data-suffix="+">0</div>
+            <div class="stat-label">Years of Mastery</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" data-target="100" data-suffix="%">0</div>
+            <div class="stat-label">Client Satisfaction</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" data-target="15" data-suffix="+">0</div>
+            <div class="stat-label">Awards & Honors</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SKILLS SECTION
+         ========================================================================== -->
+    <section id="skills" class="skills-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// ARSENAL & CAPABILITIES</span>
+          <h2 class="section-title">TECHNICAL DOMAINS</h2>
+          <p class="section-desc">Multi-disciplinary stack engineered for deep visual immersion and raw performance.</p>
+        </div>
+
+        <div class="skills-categories">
+          <!-- Category 1 -->
+          <div class="skill-category-card">
+            <div class="category-header">
+              <div class="category-icon">💎</div>
+              <h3 class="category-title">3D & WebGL Graphics</h3>
+            </div>
+            <div class="skill-list">
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span class="skill-name">Three.js / WebGL</span>
+                  <span class="skill-percentage">95%</span>
+                </div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: 95%;"></div></div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span class="skill-name">GLSL Custom Shaders</span>
+                  <span class="skill-percentage">88%</span>
+                </div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: 88%;"></div></div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span class="skill-name">Blender / 3D Asset Optimization</span>
+                  <span class="skill-percentage">82%</span>
+                </div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: 82%;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category 2 -->
+          <div class="skill-category-card">
+            <div class="category-header">
+              <div class="category-icon">⚡</div>
+              <h3 class="category-title">Frontend Architecture</h3>
+            </div>
+            <div class="skill-list">
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span class="skill-name">React / Next.js / TypeScript</span>
+                  <span class="skill-percentage">92%</span>
+                </div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: 92%;"></div></div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span class="skill-name">GSAP Animations & ScrollTrigger</span>
+                  <span class="skill-percentage">96%</span>
+                </div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: 96%;"></div></div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span class="skill-name">Modern CSS3 / Houdini / Glassmorphism</span>
+                  <span class="skill-percentage">95%</span>
+                </div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: 95%;"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category 3 -->
+          <div class="skill-category-card">
+            <div class="category-header">
+              <div class="category-icon">🌐</div>
+              <h3 class="category-title">Backend & Cloud Systems</h3>
+            </div>
+            <div class="skill-list">
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span class="skill-name">Node.js / Express / Fastify</span>
+                  <span class="skill-percentage">86%</span>
+                </div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: 86%;"></div></div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span class="skill-name">Python / AI Integrations</span>
+                  <span class="skill-percentage">80%</span>
+                </div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: 80%;"></div></div>
+              </div>
+              <div class="skill-item">
+                <div class="skill-info">
+                  <span class="skill-name">Docker & WebSockets Streaming</span>
+                  <span class="skill-percentage">84%</span>
+                </div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: 84%;"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         FEATURED PROJECTS SECTION
+         ========================================================================== -->
+    <section id="projects" class="projects-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// SELECTED WORKS</span>
+          <h2 class="section-title">3D INTERACTIVE CREATIONS</h2>
+          <p class="section-desc">Hover and interact with each card to experience dynamic 3D perspective shifts.</p>
+        </div>
+
+        <!-- Project Filtering -->
+        <div class="project-filters">
+          <button class="filter-btn active" data-filter="all">All Explorations</button>
+          <button class="filter-btn" data-filter="webgl">3D & WebGL</button>
+          <button class="filter-btn" data-filter="fullstack">Full Stack Systems</button>
+          <button class="filter-btn" data-filter="ai">Generative AI</button>
+        </div>
+
+        <div class="projects-grid">
+
+          <!-- Project 1 -->
+          <div class="project-card" data-category="webgl">
+            <div class="project-thumbnail">
+              <span class="project-badge-tag">WEBGL // THREE.JS</span>
+              <div class="project-links-overlay">
+                <a href="#projects" class="card-link-icon" title="View Source">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                </a>
+                <a href="#projects" class="card-link-icon" title="Live Preview">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+              </div>
+              <div class="project-canvas-preview" data-type="space-portal"></div>
+            </div>
+            <div class="project-details">
+              <h3 class="project-title">Hyperion 3D Space Portal</h3>
+              <p class="project-description">
+                An immersive WebGL space exploration portal rendering procedural planetary atmospheres, volumetric rings, and physics-based orbital mechanics at 60 FPS.
+              </p>
+              <div class="project-tech-tags">
+                <span class="tech-tag">Three.js</span>
+                <span class="tech-tag">GLSL Shaders</span>
+                <span class="tech-tag">WebGL 2.0</span>
+                <span class="tech-tag">Cannon.js</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project 2 -->
+          <div class="project-card" data-category="ai">
+            <div class="project-thumbnail">
+              <span class="project-badge-tag">AI // SOUND REACTIVE</span>
+              <div class="project-links-overlay">
+                <a href="#projects" class="card-link-icon" title="View Source">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                </a>
+                <a href="#projects" class="card-link-icon" title="Live Preview">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+              </div>
+              <div class="project-canvas-preview" data-type="neural-ai"></div>
+            </div>
+            <div class="project-details">
+              <h3 class="project-title">Neo-Synth Neural Visualizer</h3>
+              <p class="project-description">
+                Real-time audio-reactive neural network visualizer that decodes audio frequencies via the Web Audio API and displaces 3D vertices using mathematical noise fields.
+              </p>
+              <div class="project-tech-tags">
+                <span class="tech-tag">Web Audio API</span>
+                <span class="tech-tag">Vertex Shaders</span>
+                <span class="tech-tag">TensorFlow.js</span>
+                <span class="tech-tag">GSAP</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project 3 -->
+          <div class="project-card" data-category="webgl">
+            <div class="project-thumbnail">
+              <span class="project-badge-tag">COMMERCE // WEBXR</span>
+              <div class="project-links-overlay">
+                <a href="#projects" class="card-link-icon" title="View Source">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                </a>
+                <a href="#projects" class="card-link-icon" title="Live Preview">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+              </div>
+              <div class="project-canvas-preview" data-type="ecommerce-3d"></div>
+            </div>
+            <div class="project-details">
+              <h3 class="project-title">Chronos Luxury 3D Customizer</h3>
+              <p class="project-description">
+                Ultra-high-fidelity interactive 3D product customizer with physically based rendering (PBR), diamond refractive dispersion, and WebXR AR projection.
+              </p>
+              <div class="project-tech-tags">
+                <span class="tech-tag">Three.js PBR</span>
+                <span class="tech-tag">WebXR</span>
+                <span class="tech-tag">Next.js</span>
+                <span class="tech-tag">Tailwind</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project 4 -->
+          <div class="project-card" data-category="fullstack">
+            <div class="project-thumbnail">
+              <span class="project-badge-tag">SYSTEMS // OS</span>
+              <div class="project-links-overlay">
+                <a href="#projects" class="card-link-icon" title="View Source">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                </a>
+                <a href="#projects" class="card-link-icon" title="Live Preview">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+              </div>
+              <div class="project-canvas-preview" data-type="matrix-os"></div>
+            </div>
+            <div class="project-details">
+              <h3 class="project-title">Cyberpunk Matrix Virtual OS</h3>
+              <p class="project-description">
+                A web-based desktop workspace featuring simulated file systems, functional code runners, 3D window layering, and custom shell scripting interpreters.
+              </p>
+              <div class="project-tech-tags">
+                <span class="tech-tag">React</span>
+                <span class="tech-tag">WebSockets</span>
+                <span class="tech-tag">Docker</span>
+                <span class="tech-tag">TypeScript</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         EXPERIENCE / TIMELINE SECTION
+         ========================================================================== -->
+    <section id="experience" class="timeline-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// TRAJECTORY</span>
+          <h2 class="section-title">CAREER MILESTONES</h2>
+          <p class="section-desc">Key roles, agency collaborations, and architectural accomplishments.</p>
+        </div>
+
+        <div class="timeline-container">
+          <!-- Item 1 -->
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card">
+              <div class="timeline-date">2023 — PRESENT</div>
+              <h3 class="timeline-role">Principal 3D Web Architect</h3>
+              <div class="timeline-company">Nexus Digital Studio</div>
+              <p class="timeline-desc">
+                Spearheading 3D interactive design pipelines, building real-time WebGL rendering pipelines for Fortune 500 clients, and authoring in-house GLSL shader libraries.
+              </p>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card">
+              <div class="timeline-date">2021 — 2023</div>
+              <h3 class="timeline-role">Senior Creative Technologist</h3>
+              <div class="timeline-company">Vanguard Interactive</div>
+              <p class="timeline-desc">
+                Architected award-winning experiential campaigns, implemented Three.js camera rigs and custom physics engines that increased user session durations by 180%.
+              </p>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card">
+              <div class="timeline-date">2019 — 2021</div>
+              <h3 class="timeline-role">Full Stack Graphics Developer</h3>
+              <div class="timeline-company">Aether Lab</div>
+              <p class="timeline-desc">
+                Developed responsive web applications with rich Canvas/SVG micro-animations, headless CMS integrations, and real-time multiplayer WebSocket rooms.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         CALL TO ACTION BANNER
+         ========================================================================== -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-banner">
+          <div class="cta-content">
+            <h2 class="cta-title">HAVE A VISION FOR THE IMPOSSIBLE?</h2>
+            <p class="cta-text">
+              Whether you need a world-class 3D product launch, interactive web installation, or cutting-edge graphics engineering, let's bring it to life.
+            </p>
+            <a href="#contact" class="btn-primary">
+              <span>Start a Project Inquiry</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         CONTACT SECTION
+         ========================================================================== -->
+    <section id="contact" class="contact-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// COMM LINK</span>
+          <h2 class="section-title">TRANSMIT A MESSAGE</h2>
+          <p class="section-desc">Reach out for collaborations, speaking engagements, or freelance architecture.</p>
+        </div>
+
+        <div class="contact-grid">
+          <!-- Contact Info Card -->
+          <div class="contact-info-card">
+            <div>
+              <h3 class="holo-bio-title" style="margin-bottom: 12px;">Direct Frequencies</h3>
+              <p class="holo-bio-text">
+                Currently taking on select high-impact projects and strategic technical advisories. My inbox is open.
+              </p>
+            </div>
+
+            <div class="contact-info-list">
+              <a href="mailto:alex@vance.dev" class="contact-info-item">
+                <div class="contact-icon-bubble">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                </div>
+                <div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">DIRECT EMAIL</div>
+                  <div style="font-weight: 600; color: #fff;">alex@vance.dev</div>
+                </div>
+              </a>
+
+              <a href="#" class="contact-info-item">
+                <div class="contact-icon-bubble">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                </div>
+                <div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">LOCATION</div>
+                  <div style="font-weight: 600; color: #fff;">San Francisco / Remote Worldwide</div>
+                </div>
+              </a>
+            </div>
+
+            <div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono); margin-bottom: 12px;">SOCIAL CHANNELS</div>
+              <div class="social-links">
+                <a href="https://github.com" target="_blank" rel="noreferrer" class="social-btn" title="GitHub">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noreferrer" class="social-btn" title="LinkedIn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                </a>
+                <a href="https://twitter.com" target="_blank" rel="noreferrer" class="social-btn" title="X / Twitter">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+                </a>
+                <a href="https://dribbble.com" target="_blank" rel="noreferrer" class="social-btn" title="Dribbble">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94"></path><path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32"></path><path d="M8.56 2.75c4.37 6 6 9.42 8 17.72"></path></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Form Card -->
+          <div class="contact-form-card">
+            <form id="contact-form" class="contact-form">
+              <div class="form-group">
+                <label for="form-name" class="form-label">IDENTITY / NAME</label>
+                <input type="text" id="form-name" class="form-input" placeholder="e.g. Commander Shepard" required>
+              </div>
+
+              <div class="form-group">
+                <label for="form-email" class="form-label">DIGITAL COORDINATES / EMAIL</label>
+                <input type="email" id="form-email" class="form-input" placeholder="e.g. shepard@normandy.space" required>
+              </div>
+
+              <div class="form-group">
+                <label for="form-message" class="form-label">TRANSMISSION PAYLOAD</label>
+                <textarea id="form-message" class="form-textarea" placeholder="Detail your project scope, timeline, and deliverables..." required></textarea>
+              </div>
+
+              <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                <span>Send Encrypted Transmission</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-status-line">
+        <span><span class="status-dot-active"></span> CORE TELEMETRY: 60 FPS NOMINAL</span>
+        <span>•</span>
+        <span>LATENCY: 12ms</span>
+      </div>
+
+      <div class="footer-copy">
+        Designed & Built by Alex Vance &copy; 2026. All rights reserved.
+      </div>
+
+      <button id="back-to-top" class="back-to-top-btn" title="Return to Top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Feedback -->
+  <div id="toast-notice" class="toast-notice">
+    <div id="toast-message">Transmission received!</div>
+  </div>
+
+  <!-- External Libraries: Three.js & GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <!-- Custom Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/three-scene.js"></script>
+  <script src="js/tilt.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -59,17 +59,64 @@
       z-index: 1;
     }
 
-    /* Ambient CRT Scanline Overlay */
-    .cyber-grid-overlay {
+    .terminal-bg-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       pointer-events: none;
       z-index: 2;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='180' viewBox='0 0 240 180'%3E%3Cg fill='none' stroke='%238fcf9b' stroke-opacity='.16' stroke-width='1'%3E%3Cpath d='M0 28h42v24h38v22h28M240 118h-44V94h-34V70h-30M28 180v-38h36v-22h28M172 0v32h-28v28h-34'/%3E%3C/g%3E%3Cg fill='%23d9a879' fill-opacity='.28'%3E%3Ccircle cx='42' cy='28' r='2'/%3E%3Ccircle cx='80' cy='52' r='2'/%3E%3Ccircle cx='196' cy='118' r='2'/%3E%3Ccircle cx='64' cy='142' r='2'/%3E%3Ccircle cx='144' cy='32' r='2'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 240px 180px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .terminal-bg-column {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      color: rgba(72, 255, 100, 0.14);
+      font: 0.66rem/1.5 var(--font-mono);
+      text-shadow: 0 0 12px rgba(48, 255, 90, 0.1);
+    }
+    .terminal-bg-track {
+      position: absolute;
+      inset: 0 0 auto;
+      height: 200%;
+      display: flex;
+      flex-direction: column;
+      animation: terminal-bg-scroll 48s linear infinite;
+    }
+    .terminal-bg-column:nth-child(2) .terminal-bg-track { animation-delay: -12s; }
+    .terminal-bg-column:nth-child(3) .terminal-bg-track { animation-delay: -24s; }
+    .terminal-bg-column:nth-child(4) .terminal-bg-track { animation-delay: -36s; }
+    .terminal-bg-copy {
+      flex: 0 0 50%;
+      min-height: 0;
+      padding: 5vh 2.5vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+    .terminal-bg-column span {
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    @keyframes terminal-bg-scroll {
+      to { transform: translateY(-50%); }
+    }
+
+    @media (max-width: 700px) {
+      .terminal-bg-overlay {
+        grid-template-columns: 1fr;
+      }
+      .terminal-bg-copy {
+        padding: 6rem 1rem 4rem;
+      }
+      .terminal-bg-column:not(:first-child) {
+        display: none;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .terminal-bg-track { animation: none; }
     }
 
     .vignette-overlay {
@@ -684,7 +731,92 @@
   <canvas id="webgl-canvas"></canvas>
 
   <!-- Visual Grid & Vignette Overlays -->
-  <div class="cyber-grid-overlay"></div>
+  <div class="terminal-bg-overlay" aria-hidden="true">
+    <div class="terminal-bg-column">
+      <span>$ whoami</span>
+      <span>marouane-dev</span>
+      <span>$ cd ~/workspace/portfolio</span>
+      <span>$ pwd</span>
+      <span>/home/marouane/workspace/portfolio</span>
+      <span>$ git status --short</span>
+      <span>working tree clean</span>
+      <span>$ git fetch origin</span>
+      <span>remote: repository up to date</span>
+      <span>$ npm run build</span>
+      <span>build completed successfully</span>
+      <span>$ npm run lint</span>
+      <span>0 warnings, 0 errors</span>
+      <span>$ node server.js</span>
+      <span>listening on :3000</span>
+      <span>$ curl -I localhost:3000</span>
+      <span>HTTP/1.1 200 OK</span>
+      <span>$ git add src/</span>
+      <span>changes staged</span>
+      <span>$ _</span>
+    </div>
+    <div class="terminal-bg-column">
+      <span>$ uname -a</span>
+      <span>core runtime online</span>
+      <span>$ env | grep NODE</span>
+      <span>NODE_ENV=production</span>
+      <span>$ ls -la ./src</span>
+      <span>components  services  styles</span>
+      <span>$ find ./src -type f</span>
+      <span>42 source files indexed</span>
+      <span>$ npm test</span>
+      <span>all checks passed</span>
+      <span>$ npm audit --omit=dev</span>
+      <span>0 vulnerabilities found</span>
+      <span>$ git branch --show-current</span>
+      <span>main</span>
+      <span>$ git log -1 --oneline</span>
+      <span>refactor: streamline interface</span>
+      <span>$ deploy --target production</span>
+      <span>deployment ready</span>
+      <span>$ monitor --health</span>
+      <span>all services operational</span>
+    </div>
+    <div class="terminal-bg-column">
+      <span>$ ping portfolio.local</span>
+      <span>response: 12ms</span>
+      <span>$ traceroute api.local</span>
+      <span>route complete: 3 hops</span>
+      <span>$ cat package.json</span>
+      <span>scripts / dependencies / config</span>
+      <span>$ du -sh ./dist</span>
+      <span>dist: 1.8 MB</span>
+      <span>$ npm run dev</span>
+      <span>development server started</span>
+      <span>$ tail -f logs/app.log</span>
+      <span>watching application output...</span>
+      <span>$ git log -1 --oneline</span>
+      <span>update interface and systems</span>
+      <span>$ uptime</span>
+      <span>system stable: 99.9%</span>
+      <span>$ systemctl status app</span>
+      <span>active (running)</span>
+      <span>$ _</span>
+    </div>
+    <div class="terminal-bg-column">
+      <span>$ docker ps</span>
+      <span>web-app   running   0.0.0.0:3000</span>
+      <span>$ git diff --stat</span>
+      <span>4 files changed, 128 insertions</span>
+      <span>$ npm install</span>
+      <span>dependencies up to date</span>
+      <span>$ df -h /workspace</span>
+      <span>workspace: 68% available</span>
+      <span>$ journalctl -u portfolio</span>
+      <span>service started successfully</span>
+      <span>$ ss -tulpn</span>
+      <span>port 3000 accepting connections</span>
+      <span>$ git push origin main</span>
+      <span>branch synchronized</span>
+      <span>$ systemctl status nginx</span>
+      <span>active (running)</span>
+      <span>$ _</span>
+    </div>
+  </div>
   <div class="vignette-overlay"></div>
 
   <!-- Native pointer keeps the interface feeling like a familiar dev workspace. -->
@@ -1347,9 +1479,9 @@
       const tracerCount = 3;
       const linePositions = [];
       const viaPositions = [];
+      const viaColors = [];
       const tracerPositions = new Float32Array(streamCount * tracerCount * 3);
-      const tracerColors = new Float32Array(streamCount * tracerCount * 3);
-      const tracerPalette = [0x8fcf9b, 0x76d9e8, 0xe3a66f, 0xd58fc2, 0x9eaaf5];
+      const viaPalette = [0x42ff78, 0x00eaff, 0xffa51f, 0xff3e9d, 0x8a65ff];
       streamPaths = [];
       streamGroup = new THREE.Group();
 
@@ -1381,12 +1513,9 @@
 
           if (pointIndex > 0) {
             viaPositions.push(start.x, start.y, start.z);
+            const viaColor = new THREE.Color(viaPalette[(viaPositions.length / 3 - 1) % viaPalette.length]);
+            viaColor.toArray(viaColors, viaPositions.length - 3);
           }
-        }
-
-        for (let tracerIndex = 0; tracerIndex < tracerCount; tracerIndex++) {
-          const color = new THREE.Color(tracerPalette[i % tracerPalette.length]);
-          color.toArray(tracerColors, (i * tracerCount + tracerIndex) * 3);
         }
 
         streamPaths.push({ route, segmentLengths, totalLength, speed: 0.09, offset: i / streamCount });
@@ -1403,21 +1532,22 @@
 
       const viaGeometry = new THREE.BufferGeometry();
       viaGeometry.setAttribute('position', new THREE.Float32BufferAttribute(viaPositions, 3));
+      viaGeometry.setAttribute('color', new THREE.Float32BufferAttribute(viaColors, 3));
       const viaMaterial = new THREE.PointsMaterial({
-        color: 0xd9a879,
-        size: 0.3,
+        color: 0xffffff,
+        vertexColors: true,
+        size: 0.42,
         transparent: true,
-        opacity: 0.42,
-        depthWrite: false
+        opacity: 0.95,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
       });
       streamGroup.add(new THREE.Points(viaGeometry, viaMaterial));
 
       const tracerGeometry = new THREE.BufferGeometry();
       tracerGeometry.setAttribute('position', new THREE.BufferAttribute(tracerPositions, 3));
-      tracerGeometry.setAttribute('color', new THREE.BufferAttribute(tracerColors, 3));
       const tracerMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        vertexColors: true,
+        color: 0xa6d982,
         size: 0.22,
         transparent: true,
         opacity: 0.9,
@@ -1426,6 +1556,7 @@
       streamParticles = new THREE.Points(tracerGeometry, tracerMaterial);
       streamGroup.add(streamParticles);
       scene.add(streamGroup);
+      positionTracerParticles(0);
 
       // Mouse Move Listener for 3D Parallax
       window.addEventListener('mousemove', (e) => {
@@ -1442,6 +1573,36 @@
         camera.position.y = -scrollPercent * 8;
         camera.position.z = 22 + scrollPercent * 4;
       });
+    }
+
+    function positionTracerParticles(elapsedTime) {
+      if (!streamParticles) return;
+
+      const positions = streamParticles.geometry.attributes.position;
+      streamPaths.forEach((path, pathIndex) => {
+        for (let tracerIndex = 0; tracerIndex < 3; tracerIndex++) {
+          const particleIndex = pathIndex * 3 + tracerIndex;
+          const progress = ((elapsedTime * path.speed + path.offset - tracerIndex * 0.045) % 1 + 1) % 1;
+          let distance = progress * path.totalLength;
+          let segmentIndex = 0;
+
+          while (segmentIndex < path.segmentLengths.length - 1 && distance > path.segmentLengths[segmentIndex]) {
+            distance -= path.segmentLengths[segmentIndex];
+            segmentIndex++;
+          }
+
+          const segmentProgress = distance / path.segmentLengths[segmentIndex];
+          const start = path.route[segmentIndex];
+          const end = path.route[segmentIndex + 1];
+          positions.setXYZ(
+            particleIndex,
+            start.x + (end.x - start.x) * segmentProgress,
+            start.y + (end.y - start.y) * segmentProgress,
+            start.z + (end.z - start.z) * segmentProgress
+          );
+        }
+      });
+      positions.needsUpdate = true;
     }
 
     function onWindowResize() {
@@ -1466,41 +1627,19 @@
         computerGroup.rotation.x = -0.08 + curMouseY * 0.05;
       }
 
-      if (streamGroup) {
-        streamGroup.rotation.y = elapsedTime * 0.02 + curMouseX * 0.05;
-        streamGroup.rotation.x = curMouseY * 0.1;
-      }
-
-      if (streamParticles) {
-        const positions = streamParticles.geometry.attributes.position;
-        streamPaths.forEach((path, pathIndex) => {
-          for (let tracerIndex = 0; tracerIndex < 3; tracerIndex++) {
-            const particleIndex = pathIndex * 3 + tracerIndex;
-            const progress = ((elapsedTime * path.speed + path.offset - tracerIndex * 0.045) % 1 + 1) % 1;
-            let distance = progress * path.totalLength;
-            let segmentIndex = 0;
-
-            while (segmentIndex < path.segmentLengths.length - 1 && distance > path.segmentLengths[segmentIndex]) {
-              distance -= path.segmentLengths[segmentIndex];
-              segmentIndex++;
-            }
-
-            const segmentProgress = distance / path.segmentLengths[segmentIndex];
-            const start = path.route[segmentIndex];
-            const end = path.route[segmentIndex + 1];
-            positions.setXYZ(
-              particleIndex,
-              start.x + (end.x - start.x) * segmentProgress,
-              start.y + (end.y - start.y) * segmentProgress,
-              start.z + (end.z - start.z) * segmentProgress
-            );
-          }
-        });
-        positions.needsUpdate = true;
-      }
-
       renderer.render(scene, camera);
     }
+
+    document.querySelectorAll('.terminal-bg-column').forEach(column => {
+      const firstCopy = document.createElement('div');
+      firstCopy.className = 'terminal-bg-copy';
+      while (column.firstChild) firstCopy.appendChild(column.firstChild);
+
+      const track = document.createElement('div');
+      track.className = 'terminal-bg-track';
+      track.append(firstCopy, firstCopy.cloneNode(true));
+      column.appendChild(track);
+    });
 
     // Initialize when window is ready
     window.onload = function() {
