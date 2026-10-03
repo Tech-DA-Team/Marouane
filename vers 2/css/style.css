@@ -83,6 +83,9 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   color-scheme: dark;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -90,11 +93,18 @@ body {
   color: var(--text-primary);
   font-family: var(--font-main);
   line-height: 1.6;
-  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   position: relative;
   min-height: 100vh;
   selection-background-color: var(--primary-glow);
   selection-color: #000;
+}
+
+img, svg {
+  max-width: 100%;
+  height: auto;
 }
 
 ::selection {
@@ -1594,6 +1604,15 @@ section {
 /* ==========================================================================
    RESPONSIVENESS
    ========================================================================== */
+@media (max-width: 1100px) {
+  .navbar {
+    gap: 18px;
+  }
+  .nav-links {
+    gap: 14px;
+  }
+}
+
 @media (max-width: 992px) {
   .hero-grid {
     grid-template-columns: 1fr;
@@ -1633,20 +1652,218 @@ section {
 }
 
 @media (max-width: 768px) {
+  .navbar-container {
+    top: 14px;
+    padding: 0 12px;
+  }
+
+  .navbar {
+    width: 100%;
+    max-width: 540px;
+    padding: 10px 14px;
+    gap: 12px;
+  }
+
   .nav-links {
     display: none;
+    width: min(220px, calc(100vw - 40px));
+    gap: 6px;
   }
+
+  .nav-links.is-open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 74px;
+    right: 0;
+    background: rgba(10, 10, 20, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 18px 16px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .nav-links.is-open .nav-link {
+    padding: 8px 0;
+    font-size: 0.85rem;
+  }
+
   .mobile-menu-btn {
     display: block;
   }
-  .projects-grid {
-    grid-template-columns: 1fr;
+
+  .nav-controls {
+    gap: 10px;
   }
+
+  .btn-hire {
+    display: none;
+  }
+
+  .hero-section {
+    padding-top: 110px;
+  }
+
+  .hero-grid {
+    gap: 26px;
+  }
+
+  .hero-content {
+    gap: 18px;
+  }
+
+  .hero-title {
+    font-size: clamp(2.4rem, 11vw, 4rem);
+    letter-spacing: -1px;
+  }
+
+  .hero-description {
+    max-width: 100%;
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
   .scene-lab-panel {
     flex-direction: column;
     align-items: stretch;
+    padding: 14px 16px;
   }
+
   .lab-controls {
     justify-content: center;
+  }
+
+  .lab-btn {
+    flex: 1 1 calc(50% - 8px);
+    text-align: center;
+  }
+
+  .floating-3d-hud {
+    left: 10px;
+    right: 10px;
+    top: 10px;
+    font-size: 0.68rem;
+  }
+
+  .hero-3d-interactive-card {
+    height: 330px;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-cursor-dot,
+  .custom-cursor-ring {
+    display: none;
+  }
+}
+
+@media (max-width: 540px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .navbar {
+    width: calc(100% - 8px);
+    padding: 10px 12px;
+  }
+
+  .nav-brand {
+    font-size: 1rem;
+  }
+
+  .hero-status-pill {
+    font-size: 0.68rem;
+    padding: 6px 12px;
+  }
+
+  .hero-typewriter {
+    font-size: 1rem;
+  }
+
+  .hero-description {
+    font-size: 0.96rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 9vw, 2.4rem);
+  }
+
+  .terminal-body {
+    padding: 18px;
+    font-size: 0.75rem;
+  }
+
+  .profile-avatar-box {
+    width: 88px;
+    height: 88px;
+  }
+
+  .holo-profile-card {
+    padding: 24px 18px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .navbar-container {
+    top: 12px;
+  }
+
+  .nav-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .nav-icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .hero-section {
+    padding-top: 120px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+
+  .hero-3d-interactive-card {
+    height: 300px;
+  }
+
+  .floating-3d-hud {
+    font-size: 0.6rem;
+    padding: 8px 10px;
+  }
+
+  .interactive-drag-prompt {
+    font-size: 0.68rem;
+    padding: 7px 10px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }
