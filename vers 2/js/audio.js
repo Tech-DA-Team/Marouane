@@ -37,7 +37,7 @@ class SoundEngine {
       osc.frequency.setValueAtTime(800, this.ctx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(1400, this.ctx.currentTime + 0.04);
 
-      gain.gain.setValueAtTime(0.015, this.ctx.currentTime);
+      gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.04);
 
       osc.connect(gain);
@@ -61,7 +61,7 @@ class SoundEngine {
       osc.frequency.setValueAtTime(450, now);
       osc.frequency.exponentialRampToValueAtTime(220, now + 0.09);
 
-      gain.gain.setValueAtTime(0.04, now);
+      gain.gain.setValueAtTime(0.12, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
 
       osc.connect(gain);
@@ -86,7 +86,7 @@ class SoundEngine {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, startTime);
 
-        gain.gain.setValueAtTime(0.025, startTime);
+        gain.gain.setValueAtTime(0.08, startTime);
         gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.18);
 
         osc.connect(gain);

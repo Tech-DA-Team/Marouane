@@ -1640,6 +1640,7 @@ section {
     left: 20px;
   }
   .timeline-item {
+    left: 0 !important;
     width: 100%;
     padding-left: 50px !important;
     padding-right: 0 !important;
